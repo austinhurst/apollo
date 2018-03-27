@@ -38,7 +38,7 @@ Mz = 98*sin(0.3*t);
 % SHOULD BE lastname1_lastname2() ** Your function must return
 % values of wx, wy, wz, psi, theta, and phi at each time step defined
 % in the vector t.
-[wx,wy,wz,psi,theta,phi]=euler_colton(wx0,wy0,wz0,psi0,theta0,phi0,t,Mx,My,Mz);
+[wx,wy,wz,psi,theta,phi]=hurst(wx0,wy0,wz0,psi0,theta0,phi0,t,Mx,My,Mz);
 
 % Plot results
 subplot(2,1,1);

@@ -37,7 +37,7 @@ th3 = -5*sin(2*pi/30*t);
 % SHOULD BE lastname1_lastname2_cmg() ** Your function must return
 % values of wx, wy, wz, psi, theta, and phi at each time step defined
 % in the vector t.
-[wx,wy,wz,psi,theta,phi]=euler_colton_cmg(wx0,wy0,wz0,psi0,theta0,phi0,t,th1,th2,th3);
+[wx,wy,wz,psi,theta,phi]=hurst_cmg(wx0,wy0,wz0,psi0,theta0,phi0,t,th1,th2,th3);
 
 % Plot results
 subplot(2,1,1);
