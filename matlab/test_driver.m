@@ -1,9 +1,8 @@
-clear;
-clc;
+clear; clc; close all;
 
 % Time (s)
 dt = 0.01;      % Step size
-tf = 30;        % Final time
+tf = 1000;        % Final time
 t = 0:dt:tf;    % Time
 
 % Initial conditions (deg and deg/s)
@@ -18,16 +17,24 @@ phi0 = 0;
 % model and try out the different cases required in the project. When
 % you send me your function, I will try out some torques to see if
 % your model accurately predicts the response.
-% Mx = zeros(size(t));
-% My = zeros(size(t));
-% Mz = zeros(size(t));
-Mx = 176*cos(0.2*t);
-My = 54*ones(size(t));
-Mz = 98*sin(0.3*t);
-% omega = wx0*pi/180
+% omega = wx0*pi/180;
 % Mx = zeros(size(t));
 % My = 3179*omega^2*ones(size(t));
 % Mz = 1538*omega^2*ones(size(t));
+
+
+% Part C.b
+% Mx = 176*cos(0.2*t);
+% My = 54*ones(size(t));
+% Mz = 98*sin(0.3*t);
+% Part C.c.1
+Mx = zeros(size(t));
+My = -0.968471643039707*ones(size(t));
+Mz = -0.468444068275835*ones(size(t));
+% Part C.c.2
+% Mx = zeros(size(t));
+% My = zeros(size(t));
+% Mz = zeros(size(t));
 
 % Call the project function. Note that the initial values are passed in
 % units of degrees and degrees/s, and the function returns solution
@@ -41,6 +48,7 @@ Mz = 98*sin(0.3*t);
 [wx,wy,wz,psi,theta,phi]=hurst(wx0,wy0,wz0,psi0,theta0,phi0,t,Mx,My,Mz);
 
 % Plot results
+figure (1)
 subplot(2,1,1);
 plot(t,wx,t,wy,t,wz);
 xlabel('t (s)');
