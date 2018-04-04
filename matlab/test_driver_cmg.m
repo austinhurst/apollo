@@ -40,8 +40,22 @@ th3 =  4.00*sin(t);
 % values of wx, wy, wz, psi, theta, and phi at each time step defined
 % in the vector t.
 [wx,wy,wz,psi,theta,phi]=hurst_cmg(wx0,wy0,wz0,psi0,theta0,phi0,t,th1,th2,th3);
-% [wx,wy,wz,psi,theta,phi]=cmg_verbose(wx0,wy0,wz0,psi0,theta0,phi0,t);
 
+% Plot results
+figure (1)
+subplot(2,1,1);
+plot(t,wx,t,wy,t,wz);
+xlabel('t (s)');
+ylabel('\omega (deg/s)');
+legend('\omega_x','\omega_y','\omega_z');
+subplot(2,1,2);
+plot(t,psi,t,theta,t,phi);
+xlabel('t (s)');
+ylabel('\psi, \theta, \phi (deg)');
+legend('\psi','\theta','\phi');
+
+
+[wx,wy,wz,psi,theta,phi]=cmg_verbose(wx0,wy0,wz0,psi0,theta0,phi0,t);
 % Plot results
 figure (2)
 subplot(2,1,1);

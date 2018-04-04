@@ -201,7 +201,7 @@ function [M] = compute_M(t, th)
   Mcsm3 = [
            -cos(theta3)*IR*Omega*theta3_dot;
             0.0;
-           -sin(theta3)*IR*Omega*theta3_dot;
+            sin(theta3)*IR*Omega*theta3_dot;
           ];
   M = Mcsm1 + Mcsm2 + Mcsm3;
 
