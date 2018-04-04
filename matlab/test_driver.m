@@ -2,36 +2,33 @@ clear; clc; close all;
 
 % Time (s)
 dt = 0.01;      % Step size
-tf = 1000;        % Final time
-t = 0:dt:tf;    % Time
+tf = 30.0;        % Final time
+t  = 0:dt:tf;    % Time
 
 % Initial conditions (deg and deg/s)
-wx0 = 1;
-wy0 = 0;
-wz0 = 0;
-psi0 = 0;
+wx0    = 0;
+wy0    = 0;
+wz0    = 0;
+psi0   = 0;
 theta0 = 0;
-phi0 = 0;
+phi0   = 0;
 
 % Torques (N-m). You can change these torque vectors to validate your
 % model and try out the different cases required in the project. When
 % you send me your function, I will try out some torques to see if
 % your model accurately predicts the response.
-% omega = wx0*pi/180;
-% Mx = zeros(size(t));
-% My = 3179*omega^2*ones(size(t));
-% Mz = 1538*omega^2*ones(size(t));
-
 
 % Part C.b
-% Mx = 176*cos(0.2*t);
-% My = 54*ones(size(t));
-% Mz = 98*sin(0.3*t);
+Mx = 176*cos(0.2*t);
+My = 54*ones(size(t));
+Mz = 98*sin(0.3*t);
 % Part C.c.1
-Mx = zeros(size(t));
-My = -0.968471643039707*ones(size(t));
-Mz = -0.468444068275835*ones(size(t));
+% wx0 = 1.0;
+% Mx  = 0.000000000000000*ones(size(t));
+% My  = 0.968471643039707*ones(size(t));
+% Mz  = 0.468444068275835*ones(size(t));
 % Part C.c.2
+% wx0 = 1.0;
 % Mx = zeros(size(t));
 % My = zeros(size(t));
 % Mz = zeros(size(t));

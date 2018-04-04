@@ -1,4 +1,4 @@
-function [wx, wy, wz, psi, theta, phi] = hurst(wx0, wy0, wz0, psi0, theta0, phi0, t, Mx, My, Mz)
+function [wx, wy, wz, psi, theta, phi] = cmg_verbose(wx0, wy0, wz0, psi0, theta0, phi0, t)
 %% Apollo Spacecraft Attitude Dynamics
 % Austin Hurst
 
@@ -18,18 +18,12 @@ function [wx, wy, wz, psi, theta, phi] = hurst(wx0, wy0, wz0, psi0, theta0, phi0
 simplified_case = false;
 get_I(simplified_case);
 
-%% Task C - Simulation and Calculations
-Mx = makeRow(Mx);
-My = makeRow(My);
-Mz = makeRow(Mz);
-t  = makeRow(t);
-
-Ms = [Mx.', My.', Mz.'];
-Ts = t.';
-getTsMs(Ts, Ms);
+%% Task E - Simulation and Calculations
+t   = makeRow(t);
+Ts  = t.';
 
 x0    = [phi0, theta0, psi0, wx0, wy0, wz0]*pi/180.0;
-[t,x] = ode45(@apollo_eom, t, x0);
+[t,x] = ode45(@apollo_eom_cmg_verbose, t, x0);
 x     = x*180.0/pi;
 phi   = x(:,1);
 theta = x(:,2);
@@ -51,12 +45,6 @@ wy_max    = max(wy);
 wy_min    = min(wy);
 wz_max    = max(wz);
 wz_min    = min(wz);
-
-% Passive Thermal Control
-% find moments needed to maintain a desired omega
-omega_d = [1.0; 0.0; 0.0]*pi/180;
-I = get_I();
-M = cross(omega_d,(I*omega_d));
 
 end
 function [I] = compute_I(simplified_case)
@@ -128,19 +116,21 @@ function [I] = compute_I(simplified_case)
   I_english = IA - m*(cg_A.'*cg_A*eye(3) - cg_A*cg_A.');        % Inertia Matrix in the B frame (slug*ft^2)
   I = I_english*slugftft2kgmm;                                  % Inertia Matrix in the B frame (kg*m^2)
 end
-function [xdot] = apollo_eom(t,x)
+function [xdot] = apollo_eom_cmg_verbose(t,x)
   %% Task B - Equations of Motion
   persistent I
   persistent invI
-  persistent Ts
-  persistent Ms
+  persistent p_dot
+  persistent q_dot
+  persistent r_dot
   if isempty(I) || t == 0.0
     I        = get_I();
     invI     = inv(I);
-    [Ts, Ms] = getTsMs();
+    p_dot    = 0.0;
+    q_dot    = 0.0;
+    r_dot    = 0.0;
   end
 
-  M         = interp1(Ts, Ms, t).';
   phi       = x(1);
   theta     = x(2);
   psi       = x(3);
@@ -148,6 +138,8 @@ function [xdot] = apollo_eom(t,x)
   q         = x(5);
   r         = x(6);
   omega     = [p; q; r];
+
+  M         = compute_M_verbose(t, p, q, r, p_dot, q_dot, r_dot);
 
   s_phi     = sin(phi);
   c_phi     = cos(phi);
@@ -164,24 +156,104 @@ function [xdot] = apollo_eom(t,x)
   r_dot     = omega_dot(3);
   xdot      = [phi_dot; theta_dot; psi_dot; p_dot; q_dot; r_dot];
 end
+function [M] = compute_M_verbose(t, p, q, r, p_dot, q_dot, r_dot);
+  %% Task D - Control Moment Gyroscope Model
+  persistent IR
+  persistent Omega
+  if (t == 0 || isempty(IR))
+    Omega        = 6600.0*2.0*pi/60.0;
+    IR           = get_IR();
+  end
+
+  theta1         =  10.0*cos(t)*pi/180.0;
+  theta2         =  2.50*cos(t)*pi/180.0;
+  theta3         =  4.00*sin(t)*pi/180.0;
+  theta1_dot     = -10.0*sin(t)*pi/180.0;
+  theta2_dot     = -2.50*sin(t)*pi/180.0;
+  theta3_dot     =  4.00*cos(t)*pi/180.0;
+  theta1_dot_dot = -10.0*cos(t)*pi/180.0;
+  theta2_dot_dot = -2.50*cos(t)*pi/180.0;
+  theta3_dot_dot = -4.00*sin(t)*pi/180.0;
+
+  % CMG-1
+  I       = zeros(3);
+  I(1,1)  = IR;
+  R1      = [cos(theta1), sin(theta1), 0.0; -sin(theta1), cos(theta1), 0.0; 0.0, 0.0, 1.0];
+  w       = [Omega; 0.0; theta1_dot] + R1*[p; q; r];
+  w_dot   = [
+             -theta1_dot*sin(theta1)*p + p_dot*cos(theta1) + theta1_dot*cos(theta1)*q + q_dot*sin(theta1);
+             -theta1_dot*cos(theta1)*p - p_dot*sin(theta1) - theta1_dot*sin(theta1)*q + q_dot*cos(theta1);
+              theta1_dot_dot + r_dot;
+            ];
+  w_frame = [0.0; 0.0; theta1_dot] + R1*[p; q; r];
+  M1      = I*w_dot + cross(w_frame,I*w);
+  Mcsm1   = -R1.'*M1;
+
+  % CMG-2
+  I       = zeros(3);
+  I(2,2)  = IR;
+  R2      = [1.0, 0.0, 0.0; 0.0, cos(theta2), sin(theta2); 0.0, -sin(theta2), cos(theta2)];
+  w       = [theta2_dot; Omega; 0.0] + R2*[p; q; r];
+  w_dot   = [
+              theta2_dot_dot + p_dot;
+             -theta2_dot*sin(theta2)*q + q_dot*cos(theta2) + theta2_dot*cos(theta2)*r + r_dot*sin(theta2);
+             -theta2_dot*cos(theta2)*q - q_dot*sin(theta2) - theta2_dot*sin(theta2)*r + r_dot*cos(theta2);
+            ];
+  w_frame = [theta2_dot; 0.0; 0.0] + R2*[p; q; r];
+  M2      = I*w_dot + cross(w_frame,I*w);
+  Mcsm2   = -R2.'*M2;
+
+  % CMG-3
+  I       = zeros(3);
+  I(3,3)  = IR;
+  R3      = [cos(theta3), 0.0, -sin(theta3); 0.0, 1.0, 0.0; sin(theta3), 0.0, cos(theta3)];
+  w       = [0.0; theta3_dot; Omega] + R3*[p; q; r];
+  w_dot   = [
+             -theta3_dot*sin(theta3)*p + p_dot*cos(theta3) - theta3_dot*cos(theta3)*r - r_dot*sin(theta3);
+              theta3_dot_dot + q_dot;
+              theta3_dot*cos(theta3)*p + p_dot*sin(theta3) - theta3_dot*sin(theta3)*r + r_dot*cos(theta3);
+            ];
+  w_frame = [0.0; theta3_dot; 0.0] + R3*[p; q; r];
+  M3      = I*w_dot + cross(w_frame,I*w);
+  Mcsm3   = -R3.'*M3;
+
+  M = Mcsm1 + Mcsm2 + Mcsm3;
+end
 
 %% Storage Functions
-function [Ts, Ms] = getTsMs(varargin)
-  persistent M_in
-  persistent T_in
-  if nargin == 2
-    T_in = varargin{1};
-    M_in = varargin{2};
-  end
-  Ms = M_in;
-  Ts = T_in;
-end
 function [I_out] = get_I(varargin)
   persistent I
   if nargin == 1
     I = compute_I(varargin{1});
   end
+  if isempty(I)
+    error('set I first');
+  end
   I_out = I;
+end
+function [IR] = get_IR()
+  persistent IR_s
+  if (isempty(IR_s))
+    max_th_dot = 30*pi/180.0;                % maximum thetaN gimbal rate
+    I          = get_I();
+    Omega      = 6600.0*2.0*pi/60.0;
+
+    % x axis req
+    req_x_dd   = 5.0*pi/180.0;               % required x axis acceleration rad/s^2
+    M_req      = I*[req_x_dd; 0.0; 0.0];
+    IR_min_x   = M_req(1)/(max_th_dot*Omega);
+    % y axis req
+    req_y_dd   = 2.5*pi/180.0;               % required y axis acceleration rad/s^2
+    M_req      = I*[0.0; req_y_dd; 0.0];
+    IR_min_y   = M_req(2)/(max_th_dot*Omega);
+    % z axis req
+    req_z_dd   = 2.5*pi/180.0;               % required z axis acceleration rad/s^2
+    M_req      = I*[0.0; 0.0; req_z_dd];
+    IR_min_z   = M_req(3)/(max_th_dot*Omega);
+
+    IR_s       = max([IR_min_x, IR_min_y, IR_min_z]);
+  end
+  IR = IR_s;
 end
 
 %% Miscellaneous Functions
