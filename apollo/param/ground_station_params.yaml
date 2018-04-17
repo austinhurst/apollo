@@ -1,0 +1,4 @@
+# Parameters for the ground station display.
+
+ground_station:
+  update_viz_rate: 20.0   # How often the tf is updated in Hz

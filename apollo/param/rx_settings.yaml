@@ -1,0 +1,38 @@
+# This file sets up the reciever, so it is interpreted correctly.
+rx:
+  channel_map: AETR1234       # This is the channel mapping
+                              # A = Aileron,  roll
+                              # E = Elevator, pitch
+                              # T = Thrust,   throttle
+                              # R = Rudder,   yaw
+                              # Number = Aux-Number
+  aileron:
+    min_us: 1000              # Lowest signal the tx sends in microseconds.
+    mid_us: 1535              # Middle signal the tx sends in microseconds.
+    max_us: 2015              # Longest signal the tx sends in microseconds.
+  elevator:
+    min_us:  925              # Lowest signal the tx sends in microseconds.
+    mid_us: 1396              # Middle signal the tx sends in microseconds.
+    max_us: 1912              # Longest signal the tx sends in microseconds.
+  thrust:
+    min_us:  985              # Lowest signal the tx sends in microseconds.
+    mid_us: 1463              # Middle signal the tx sends in microseconds.
+    max_us: 1960              # Longest signal the tx sends in microseconds.
+  rudder:
+    min_us:  925              # Lowest signal the tx sends in microseconds.
+    mid_us: 1527              # Middle signal the tx sends in microseconds.
+    max_us: 1985              # Longest signal the tx sends in microseconds.
+
+  curve:
+    angle_mode:
+      max_angle: 60.0         # Maximum angle allowed (positive degrees)
+      expo: 0.3               # Expo, 0.0 - 1.0, Higher means flatter near the middle
+      super_rate: 0.0         # Super Rate, 0.0 - 1.0, Higher means more extreme away from center
+    rate_mode:
+      rc: 1.0                 # RC Rate, basic tuning parameter for sensitivity
+      expo: 0.3               # Expo, 0.0 - 1.0, Higher means flatter near the middle
+      super_rate: 0.0         # Super Rate, 0.0 - 1.0, Higher means more extreme away from center
+    thrust:
+      rc: 1.0                 # RC Rate, basic tuning parameter for sensitivity
+      expo: 0.0               # Expo, 0.0 - 1.0, Higher means flatter near the middle
+      super_rate: 0.0         # Super Rate, 0.0 - 1.0, Higher means more extreme away from center

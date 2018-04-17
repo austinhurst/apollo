@@ -1,0 +1,21 @@
+<launch>
+  <param name="simulating" type="bool" value="true"                                 />
+  <param name="robot_description" textfile="$(find apollo)/viz/csm.urdf"            />
+
+  <group ns="rosflight">
+    <node name="naze"  pkg="rosflight"  type="rosflight_io"                         />
+  </group>
+
+  <group ns="apollo">
+    <rosparam command="load" file="$(find apollo)/param/vehicle_description.yaml"   />
+    <rosparam command="load" file="$(find apollo)/param/controller_params.yaml"     />
+    <rosparam command="load" file="$(find apollo)/param/ground_station_params.yaml" />
+    <rosparam command="load" file="$(find apollo)/param/rx_settings.yaml"           />
+    <rosparam command="load" file="$(find apollo)/param/initial_conditions.yaml"    />
+    <rosparam command="load" file="$(find apollo)/param/simulation_params.yaml"     />
+    <node name="controller" pkg="apollo" type="controller" output="screen"          />
+    <node name="eom" pkg="pegasus_sim" type="equations_of_motion" output="screen"   />
+  </group>
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find apollo)/viz/csm.rviz" required="true"/>
+</launch>

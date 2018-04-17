@@ -1,0 +1,9 @@
+# This file defines the CSM
+vehicle_description:
+  mass: 0.65                      # mass of vehicle in Kg
+  Ixx: 0.0051                     # moment  of inertia about i^b in Kg*m^2
+  Iyy: 0.0055                     # moment  of inertia about j^b in Kg*m^2
+  Izz: 0.0103                     # moment  of inertia about k^b in Kg*m^2
+  Ixy: 0.00                       # product of inertia about ij  in Kg*m^2
+  Ixz: 0.00                       # product of inertia about ik  in Kg*m^2
+  Iyz: 0.00                       # product of inertia about jk  in Kg*m^2

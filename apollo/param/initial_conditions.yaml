@@ -1,0 +1,8 @@
+# Initial Conditions of the Vehicle
+initial:
+  phi:   0.0
+  theta: 0.0
+  psi:   0.0
+  p:     0.0
+  q:     0.0
+  r:     0.0
