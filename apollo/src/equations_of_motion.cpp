@@ -12,8 +12,6 @@ EquationsOfMotion::EquationsOfMotion() :
     ROS_WARN("No param named 'propogate_rate'");
   if (!(ros::param::get("/apollo/ground_station/update_viz_rate",update_viz_rate)))
     ROS_WARN("No param named 'update_viz_rate'");
-  if (!(ros::param::get("/apollo/vehicle_description/mass",mass_)))
-    ROS_WARN("No param named 'mass");
   if (!(ros::param::get("/apollo/vehicle_description/Ixx",Ixx_)))
     ROS_WARN("No param named 'Ixx");
   if (!(ros::param::get("/apollo/vehicle_description/Iyy",Iyy_)))

@@ -29,7 +29,6 @@ private:
 
   //******************** CLASS VARIABLES *******************//
 protected:
-  float mass_;                // Mass of the vehicle
   float Ixx_;                 // moment  of inertia about i^b in Kg*m^2
   float Iyy_;                 // moment  of inertia about j^b in Kg*m^2
   float Izz_;                 // moment  of inertia about k^b in Kg*m^2

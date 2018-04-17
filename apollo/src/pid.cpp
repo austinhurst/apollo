@@ -5,14 +5,26 @@ namespace apollo
 PID::PID()
 {
   // SETUP THE CONTROLLER HERE
-  getRosParam("kP_phi",   kP_phi_);
-  getRosParam("kD_phi",   kD_phi_);
-  getRosParam("kP_theta", kP_theta_);
-  getRosParam("kD_theta", kD_theta_);
-  getRosParam("kP_psi",   kP_psi_);
-  getRosParam("kD_psi",   kD_psi_);
+  float Ixx, Iyy, Izz, tr, zeta;
+  getRosParam("vehicle_description/Ixx",  Ixx);
+  getRosParam("vehicle_description/Iyy",  Iyy);
+  getRosParam("vehicle_description/Izz",  Izz);
+  getRosParam("rise_time",                tr);
+  getRosParam("zeta",                     zeta);
 
-  getRosParam("vehicle_description/mass",mass_);
+  float wn = 2.2f/tr;
+  // PHI
+  kP_phi_ = wn*wn*Ixx;
+  kD_phi_ = 2.0f*zeta*wn*Ixx;
+
+  // THETA
+  kP_theta_ = wn*wn*Iyy;
+  kD_theta_ = 2.0f*zeta*wn*Iyy;
+
+  // PSI
+  kD_psi_ = 0.0f;
+  kP_psi_ = 5.0f*(Izz + kD_psi_)/tr;
+
   sigma_         = 0.05;
   r_last_        = 0.0;
   rd_            = 0.0;
@@ -23,9 +35,6 @@ void PID::control(const ros::TimerEvent& event)
   mapControlChannels();
   ros::Duration time_step = new_time - last_time_;
   ts_ = time_step.toSec();
-
-// Thrust
-// TODO
 
   // PHI - PD CONTROL
   float e_phi     = roll_desired_ - state_.phi;
@@ -44,6 +53,7 @@ void PID::control(const ros::TimerEvent& event)
   Mx_ = tau_phi;
   My_ = tau_theta;
   Mz_ = tau_psi;
+
   publishMomentsCommand();
   publishDesiredCommand();
 

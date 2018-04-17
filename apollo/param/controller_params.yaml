@@ -3,11 +3,5 @@ control_rate: 300       # The rate the controller runs at (Hz)
 
 control_type: PID       # Type of Controller
                         # PID - Proportinal Integral Derivative Control
-kP_phi:   1.9071
-kD_phi:   0.1058
-
-kP_theta: 1.9071
-kD_theta: 0.1058
-
-kP_psi:   1
-kD_psi:   0.0272
+rise_time: 1.0          # rise time in seconds
+zeta: 0.7071            # damping ratio
