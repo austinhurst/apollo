@@ -13,7 +13,6 @@ PID::PID()
   getRosParam("kD_psi",   kD_psi_);
 
   getRosParam("vehicle_description/mass",mass_);
-  getRosParam("vehicle_description/g",g_);
   sigma_         = 0.05;
   r_last_        = 0.0;
   rd_            = 0.0;
@@ -42,6 +41,9 @@ void PID::control(const ros::TimerEvent& event)
   float tau_psi   = kP_psi_*e_psi  - kD_psi_*rd_;
 
   // OUTPUT
+  Mx_ = tau_phi;
+  My_ = tau_theta;
+  Mz_ = tau_psi;
   publishMomentsCommand();
   publishDesiredCommand();
 

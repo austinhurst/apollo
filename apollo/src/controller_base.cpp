@@ -17,7 +17,7 @@ Controller::Controller() :
   vehicle_state_subscriber_ = nh_.subscribe("truth",1,&Controller::vehicleStateCallback, this);
   rx_subscriber_ = nh_.subscribe("/rosflight/rc_raw",1,&Controller::rxCallback, this);
 
-  moment_command_publisher_   = nh_.advertise<TODO>("motor_command",1);
+  moment_command_publisher_   = nh_.advertise<geometry_msgs::Vector3>("moment_command",1);
   desired_command_publisher_  = nh_.advertise<DesiredControl>("desired_command",1);
 
   //******************** CLASS VARIABLES *******************//
@@ -25,6 +25,9 @@ Controller::Controller() :
   yaw_rate_desired_   = 0.0f;
   roll_desired_       = 0.0f;
   pitch_desired_      = 0.0f;
+  Mx_                 = 0.0f;
+  My_                 = 0.0f;
+  Mz_                 = 0.0f;
 
   //***************** CALLBACKS AND TIMERS *****************//
   control_timer_ = nh_.createTimer(ros::Duration(1.0/control_rate), &Controller::control, this);
@@ -171,9 +174,13 @@ void Controller::publishDesiredCommand()
   des_msg.pitch_desired      = pitch_desired_;
   desired_command_publisher_.publish(des_msg);
 }
-void Controller::publishMomentCommands()
+void Controller::publishMomentsCommand()
 {
-
+  geometry_msgs::Vector3 M;
+  M.x = Mx_;
+  M.y = My_;
+  M.z = Mz_;
+  moment_command_publisher_.publish(M);
 }
 void Controller::setChannels(std::string channel_map)
 {
@@ -192,18 +199,6 @@ void Controller::setChannels(std::string channel_map)
       break;
     case 'R':
       R_channel_ = i;
-      break;
-    case '1':
-      aux1_channel_ = i;
-      break;
-    case '2':
-      aux2_channel_ = i;
-      break;
-    case '3':
-      aux3_channel_ = i;
-      break;
-    case '4':
-      aux4_channel_ = i;
       break;
     }
   }
@@ -244,7 +239,7 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "controller");
   ros::NodeHandle nh("apollo");
 
-  pegasus::Controller *controller_obj;
+  apollo::Controller *controller_obj;
   std::string control_type;
   if (!(ros::param::get("control_type",control_type)))
     ROS_WARN("No param named 'control_type'");

@@ -5,11 +5,12 @@
 #include <map>
 #include <string>
 #include <ros/ros.h>
-#include <pegasus/VehicleState.h>
-#include <pegasus/state_t.h>
-#include <pegasus/DesiredControl.h>
+#include <apollo/VehicleState.h>
+#include <apollo/state_t.h>
+#include <apollo/DesiredControl.h>
 
 #include <rosflight_msgs/RCRaw.h>
+#include <geometry_msgs/Vector3.h>
 
 namespace apollo
 {
@@ -27,6 +28,7 @@ private:
   ros::Subscriber rx_subscriber_;
 
   ros::Publisher desired_command_publisher_;
+  ros::Publisher moment_command_publisher_;
 
   //******************** CLASS VARIABLES *******************//
 protected:
@@ -36,8 +38,12 @@ protected:
   float roll_desired_;
   float pitch_desired_;
   float yaw_rate_desired_;
+  float thrust_desired_;
   float piD180_;
 
+  float Mx_;
+  float My_;
+  float Mz_;
 private:
   // rx Channel Variables
   int rx_[8];
@@ -70,7 +76,7 @@ protected:
   ros::Timer control_timer_;
   //********************** FUNCTIONS ***********************//
   void pullParameters();
-  void publishMomentCommands();
+  void publishMomentsCommand();
   void publishDesiredCommand();
   void mapControlChannels();
   void buildStickMap();

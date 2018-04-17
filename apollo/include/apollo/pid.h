@@ -14,7 +14,6 @@ private:
   virtual void control(const ros::TimerEvent& event);
   double ts_;
   float mass_;
-  float g_;
 
   // PHI
   float kP_phi_;

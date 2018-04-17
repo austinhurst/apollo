@@ -1,6 +1,6 @@
 <launch>
   <param name="simulating" type="bool" value="true"                                 />
-  <param name="robot_description" textfile="$(find apollo)/viz/csm.urdf"            />
+  <param name="robot_description" textfile="$(find apollo)/viz/qcopter.urdf"        />
 
   <group ns="rosflight">
     <node name="naze"  pkg="rosflight"  type="rosflight_io"                         />
@@ -14,7 +14,7 @@
     <rosparam command="load" file="$(find apollo)/param/initial_conditions.yaml"    />
     <rosparam command="load" file="$(find apollo)/param/simulation_params.yaml"     />
     <node name="controller" pkg="apollo" type="controller" output="screen"          />
-    <node name="eom" pkg="pegasus_sim" type="equations_of_motion" output="screen"   />
+    <node name="eom" pkg="apollo" type="equations_of_motion" output="screen"        />
   </group>
 
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find apollo)/viz/csm.rviz" required="true"/>

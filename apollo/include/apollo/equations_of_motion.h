@@ -3,12 +3,13 @@
 
 #include <cmath>
 #include <string>
-#include <stdlib.h>
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
 #include <tf/LinearMath/Quaternion.h>
 #include <apollo/VehicleState.h>
 #include <apollo/state_t.h>
+
+#include <geometry_msgs/Vector3.h>
 
 namespace apollo
 {
@@ -22,6 +23,7 @@ private:
   ros::NodeHandle nh_;         // public node handle for publishing, subscribing
 
   //************** SUBSCRIBERS AND PUBLISHERS **************//
+  ros::Subscriber moment_subscriber_;
   ros::Publisher truth_publisher_;
   tf::TransformBroadcaster pose_broadcaster_;
 
@@ -48,6 +50,10 @@ protected:
   // Truth Variables
   state_t state_;
 
+  float Mx_;
+  float My_;
+  float Mz_;
+
 private:
   // RK4 Variables
   state_t k1_;
@@ -65,6 +71,7 @@ private:
   ros::Timer propogate_timer_;
   void updateViz(const ros::WallTimerEvent& event);
   ros::WallTimer update_viz_timer_;
+  void momentCallback(const geometry_msgs::Vector3ConstPtr &ms);
 
   //********************** FUNCTIONS ***********************//
 protected:
