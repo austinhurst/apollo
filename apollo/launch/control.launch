@@ -1,6 +1,6 @@
 <launch>
   <param name="simulating" type="bool" value="true"                                 />
-  <param name="robot_description" textfile="$(find apollo)/viz/qcopter.urdf"        />
+  <param name="robot_description" textfile="$(find apollo)/viz/csm.urdf"        />
 
   <group ns="rosflight">
     <node name="naze"  pkg="rosflight"  type="rosflight_io"                         />

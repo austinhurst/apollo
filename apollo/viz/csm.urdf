@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<robot name="csm"> -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://apollo/viz/csm.dae"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="1.57079632 0 1.57079632"/>
+    </visual>
+  </link>
+</robot>

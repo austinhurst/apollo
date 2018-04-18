@@ -29,7 +29,7 @@ rx:
       expo: 0.3               # Expo, 0.0 - 1.0, Higher means flatter near the middle
       super_rate: 0.0         # Super Rate, 0.0 - 1.0, Higher means more extreme away from center
     rate_mode:
-      rc: 0.3                 # RC Rate, basic tuning parameter for sensitivity
+      rc: 0.075               # RC Rate, basic tuning parameter for sensitivity
       expo: 0.3               # Expo, 0.0 - 1.0, Higher means flatter near the middle
       super_rate: 0.0         # Super Rate, 0.0 - 1.0, Higher means more extreme away from center
     thrust:
