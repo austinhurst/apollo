@@ -18,4 +18,19 @@
   </group>
 
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find apollo)/viz/csm.rviz" required="true"/>
+
+  <node name="pitch_plotter"
+      pkg="rqt_plot"
+      type="rqt_plot"
+      args="/apollo/truth/theta /apollo/desired_command/pitch_desired" />
+
+  <node name="roll_plotter"
+      pkg="rqt_plot"
+      type="rqt_plot"
+      args="/apollo/truth/phi /apollo/desired_command/roll_desired" />
+
+  <node name="yaw_plotter"
+      pkg="rqt_plot"
+      type="rqt_plot"
+      args="/apollo/truth/r /apollo/desired_command/yaw_rate_desired" />
 </launch>
